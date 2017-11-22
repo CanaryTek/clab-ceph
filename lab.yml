@@ -1,0 +1,153 @@
+## Lab config
+# Syntax: YAML
+---
+lab_name: Ceph
+prefix: ceph
+images:
+ default:
+   name: openSUSE-Leap.x86_64-1.42.3-mit-Build3.1.qcow2
+   url: "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap.x86_64-1.42.3-mit-Build3.1.qcow2"
+vms:
+ ceph-deploy:
+   name: ceph-deploy
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:00:01
+       bridge: virbr0
+       ip: 192.168.122.11
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+ ceph-test:
+   name: ceph-test
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:00:02
+       bridge: virbr0
+       ip: 192.168.122.12
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+ ceph-mon1:
+   name: ceph-mon1
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:01:01
+       bridge: virbr0
+       ip: 192.168.122.21
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+ ceph-mon2:
+   name: ceph-mon2
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:01:02
+       bridge: virbr0
+       ip: 192.168.122.22
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+ ceph-mon3:
+   name: ceph-mon3
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:01:03
+       bridge: virbr0
+       ip: 192.168.122.23
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+ ceph-osd1:
+   name: ceph-osd1
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:0d:01
+       bridge: virbr0
+       ip: 192.168.122.31
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+     disk2:
+       size: 30
+     disk3:
+       size: 30
+ ceph-osd2:
+   name: ceph-osd2
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:0d:02
+       bridge: virbr0
+       ip: 192.168.122.32
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+     disk2:
+       size: 30
+     disk3:
+       size: 30
+ ceph-osd3:
+   name: ceph-osd3
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:0d:03
+       bridge: virbr0
+       ip: 192.168.122.33
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+     disk2:
+       size: 30
+     disk3:
+       size: 30
+ ceph-osd4:
+   name: ceph-osd4
+   ram: 1024
+   cpus: 1
+   net:
+     net1: 
+       mac: 52:54:00:64:0d:04
+       bridge: virbr0
+       ip: 192.168.122.34
+       netmask: 255.255.255.0
+       gateway: 192.168.122.1
+   disks:
+     disk1:
+       size: 40
+     disk2:
+       size: 30
+     disk3:
+       size: 30
+
