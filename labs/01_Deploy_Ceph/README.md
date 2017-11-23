@@ -173,7 +173,7 @@ profile-default/cluster/*.sls
 profile-default/stack/default/ceph/minions/*.yml
 ```
 
-  * We ran stage 2
+  * Run stage 2 (setup)
 
 ```
   salt-run state.orch ceph.stage.2
