@@ -211,6 +211,8 @@ profile-default/stack/default/ceph/minions/*.yml
 
 ### Complete stop/start
 
+If you need to stop the whole cluster, follow this procedure to do a clean shutdown
+
 #### Stop
 
   1. Stop the clients from using the RBD images/Rados Gateway on this cluster or any other clients.
