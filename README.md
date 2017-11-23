@@ -14,7 +14,7 @@ This lab consists of 9 VM based on openSUSE Leap 42.3 with static IP
 rake prepare_lab
 ```
 
-  1. Edit the lab.yml file to adapt to your needs (if needed
+  1. Edit the lab.yml file to adapt to your needs (if needed)
 
   2. If using btrfs, create a "vm" subvolume so you can create snapwhot at each Lab stage
 
