@@ -25,7 +25,7 @@
   * Disable ipv6 in all nodes (to avoid long delays)
 
 ```
-echo > /etc/sysctl.d/disable-ipv6.conf <<EOF
+cat > /etc/sysctl.d/disable-ipv6.conf <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
@@ -124,7 +124,11 @@ deepsea_minions: 'ceph*'
 
 ```
   salt-run state.orch ceph.stage.0
+  o
+  deepsea stage run ceph.stage.0
 ```
+
+  * If the deploy host gets rebooted to install a given kernel version, make sure ALL nodes are running that version. Remove any newer version if needed. Otherwise, to following stages will not complete
 
   * Run stage 1 (discover)
 
@@ -171,6 +175,12 @@ config/stack/default/ceph/cluster.yml
 ## Profiles
 profile-default/cluster/*.sls
 profile-default/stack/default/ceph/minions/*.yml
+```
+
+  * You can also change network configuration in the following file
+
+```
+  /srv/pillar/ceph/proposals/config/stack/default/ceph/cluster.yml
 ```
 
   * Run stage 2 (setup)

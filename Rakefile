@@ -18,6 +18,9 @@ end
 
 desc "Create instances"
 task :init_vms do |t|
+	 # Create osdbr0 bridge
+	 %x[brctl addbr osdbr0]
+	 %x[ip link set osdbr0 up]
 	 @vms.each do |vm|
 		name=vm
 		next if name=="#{@prefix}.admin"
@@ -35,8 +38,7 @@ task :init_vms do |t|
 		%x[cd #{vm_dir} ; genisoimage -output cidata.iso -volid cidata -joliet -r meta-data user-data]
 		%x[cp images/#{@config["images"]["default"]["name"]} #{vm_dir}/#{vm}-disk1.qcow2]
 		%x[qemu-img resize #{vm_dir}/#{vm}-disk1.qcow2 #{@config["vms"][vm]["disks"]["disk1"]["size"]}G]
-    #%x[sudo virt-install --import --name #{@prefix}.#{vm} --ram #{ram} --vcpus #{cpus} #{disk_entry} #{net_entry} --disk #{vm_dir}/cidata.iso,device=cdrom --network bridge=#{bridge},model=virtio --os-type=linux --os-variant=sles12 --noautoconsole #{options}]
-    %x[sudo virt-install --import --name #{@prefix}.#{vm} --ram #{ram} --vcpus #{cpus} #{disk_entry} #{net_entry} --disk #{vm_dir}/cidata.iso,device=cdrom --os-type=linux --os-variant=sles12 --noautoconsole #{options}]
+    		%x[sudo virt-install --import --name #{@prefix}.#{vm} --ram #{ram} --vcpus #{cpus} #{disk_entry} #{net_entry} --disk #{vm_dir}/cidata.iso,device=cdrom --os-type=linux --os-variant=sles12 --noautoconsole #{options}]
 	end
 end
 
@@ -153,12 +155,17 @@ def create_meta_data(vm)
 instance-id: #{vm}
 local-hostname: #{vm}
 network-interfaces: |
-  auto eth0
-  iface eth0 inet static
-  address #{@config["vms"][vm]['net']['net1']["ip"]}
-  netmask #{@config["vms"][vm]['net']['net1']["netmask"]}
-  gateway #{@config["vms"][vm]['net']['net1']["gateway"]}
 __EOB__
+		# Net interfaces
+		i=0
+		@config["vms"][vm]["net"].keys.sort.each do |intf|
+			f.puts "  auto eth#{i}"
+  			f.puts "  iface eth#{i} inet static"
+  			f.puts "    address #{@config['vms'][vm]['net'][intf]['ip']}"
+  			f.puts "    netmask #{@config['vms'][vm]['net'][intf]['netmask']}"
+			f.puts "    gateway #{@config['vms'][vm]['net'][intf]['gateway']}" if @config['vms'][vm]['net'][intf].has_key? 'gateway'
+			i+=1
+		end
 	end
 end
 
