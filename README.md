@@ -52,17 +52,22 @@ btfs snap .snapshots/01_after_installation vm
 
 ## Labs
 
-  * [Lab 1: Deploy_Ceph](labs/01_Deploy_Ceph/)
-  * [Lab 2: Basic admin commands]
+  * [Lab 1: Deploy_Ceph](labs/01_Deploy_Ceph.md)
+  * [Lab 2: Pools](labs/02_Pools.md)
+  * [Lab 3: RBD_Rados_Block_Device](labs/03_RBD_Rados_Block_Device.md)
+  * [Lab 4: Data Placement](labs/04_Data_Placement.md)
+  * [Lab 5: Crush Maps](labs/05_Crush_Maps.md)
+  * [Lab 6: CephFS](labs/06_CephFS.md)
+  * [Lab 7: Users and Access](labs/07_Users_and_Access.md)
+  * [Lab 8: RadosGW](labs/08_RadosGW.md)
+
+**TODO**
+
   * [Lab X: OSD failure]
   * [Lab X: MON failure]
   * [Lab X: Add new OSD host]
   * [Lab X: Delete a OSD host]
-  * [Lab X: CRUSH maps: racks and rooms]
   * [Lab X: Replace a MON]
-  * [Lab X: RBD]
-  * [Lab X: CephFS]
-  * [Lab X: RadosGW]
   * [Lab X: GaneshaNFS]
   * [Lab X: iSCSI]
 
