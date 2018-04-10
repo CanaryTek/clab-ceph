@@ -136,7 +136,7 @@ We will create several subdirectories in cephfs and allow the test user access t
 
   * Allow the test user access to the cephfs_data pool and the subdir in mds. NOTE: with old kernels (before 4.x) you need to allow read access to the "/" path
 
-        ceph auth caps client.test mon "allow r" osd "allow rw pool=cephfs_data" mds "allow r, allow rw path=/test-home"
+        ceph auth caps client.test mon "allow r" osd 'allow * pool=cephfs_data' mds "allow * path=/test-home"
 
   * In recent versions you can also use the ceph fs authorize
 
