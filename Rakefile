@@ -27,7 +27,6 @@ task :init_vms do |t|
 		ram=@config["vms"][vm]["ram"]
 		cpus=@config["vms"][vm]["cpus"]
 		options=@config["vms"][vm]["options"]
-		bridge=@config["vms"][vm]["bridge"]
 		vm_dir="vm/#{@prefix}.#{vm}"
 		disk_entry=generate_disk_entries(vm)
 		net_entry=generate_net_entries(vm)
@@ -68,6 +67,8 @@ end
 
 desc "Start lab virtual machines"
 task :start_vms do |t|
+	# Create osdbr0 bridge if it doesn't exist
+	%x[sudo brctl show | grep -q osdbr0 || echo "Creating bridge osdbr0"  && sudo brctl addbr osdbr0 && sudo ip link set osdbr0 up]
 	@vms.each do |vm|
 		puts "Starting #{@prefix}.#{vm}"
 		%x[sudo virsh start #{@prefix}.#{vm}]

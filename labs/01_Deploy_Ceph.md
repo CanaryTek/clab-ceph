@@ -19,7 +19,7 @@
   * Copy /etc/hosts to all nodes
 
 ```
-  for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/hosts root@$h:/etc/hosts; done
+for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/hosts root@$h:/etc/hosts; done
 ```
 
   * Disable ipv6 in all nodes (to avoid long delays)
@@ -33,83 +33,109 @@ EOF
 ```
 
 ```
-  for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/sysctl.d/disable-ipv6.conf root@$h:/etc/sysctl.d/disable-ipv6.conf; done
+for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/sysctl.d/disable-ipv6.conf root@$h:/etc/sysctl.d/disable-ipv6.conf; done
 ```
 
   * Setup nameserver in all hosts
 
 ```
-  echo "nameserver 192.168.122.1" > /etc/resolv.conf
-  for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "nameserver 192.168.122.1" > /etc/resolv.conf'; done
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "nameserver 192.168.122.1" > /etc/resolv.conf'; done
 ```
 
   * Install and start NTP in all hosts
 
 ```
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in ntp'; done
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h "ntpdate pool.ntp.org; systemctl start ntpd; systemctl enable ntpd "; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in ntp'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h "ntpdate pool.ntp.org; systemctl start ntpd; systemctl enable ntpd "; done
 ```
 
-  * Install and start iptables in all hosts
+  * Install some dependencies in all hosts
 
 ```
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in iptables'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in iptables pciutils'; done
 ```
 
   * Update all nodes
 
 ```
-  for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive update; reboot'; done
-  zypper --non-interactive update; reboot
+for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive update; reboot'; done
+zypper --non-interactive update; reboot
 ```
 
 ## Install DeepSea in deploy host
 
-  * Install repo
+  * Install DeepSea repo on all hosts
 
 ```
-  zypper ar "http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo"
-  zypper refresh
-  zypper install deepsea
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
+```
+
+  * Install DeepSea
+
+```
+zypper install deepsea
+```
+
+  * Add OpenATTIC repo to all hosts
+
+```
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
+```
+
+  * Add Swiftgist repo to all hosts
+
+```
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "https://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.3/home:swiftgist.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
+```
+
+  * Add Python repo to all hosts
+
+```
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h '"https://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_Leap_42.3/devel:languages:python.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
 ```
 
   * Change /etc/salt/master to run salt-master as user "salt"
 
 ```
-  user: salt
+user: salt
 ```
 
   * Start salt-master
 
 ```
-  systemctl enable salt-master.service ; systemctl start salt-master.service
-  systemctl enable salt-api.service ; systemctl start salt-api.service
+systemctl enable salt-master.service ; systemctl start salt-master.service
+systemctl enable salt-api.service ; systemctl start salt-api.service
 ```
 
   * Install and start salt-minion in all hosts
 
 ```
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in salt-minion'; done
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "master: ceph-deploy" > /etc/salt/minion.d/master.conf'; done
-  for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'systemctl start salt-minion; systemctl enable salt-minion'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive in salt-minion'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "master: ceph-deploy" > /etc/salt/minion.d/master.conf'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'systemctl start salt-minion; systemctl enable salt-minion'; done
 ```
 
   * Accept all keys
 
 ```
-  salt-key -A
+salt-key -A
 ```
 
   * Check salt is OK
 
 ```
-  salt "*" test.ping
-  salt "*" test.version
+salt "*" test.ping
+salt "*" test.version
 ```
   * Check salt-api (get the SHAREDSECRET from /etc/salt/master.d/sharedsecret.conf)
 
 ```
-  curl -sSk http://localhost:8000/login -H 'Accept: application/x-yaml' -d eauth=sharedsecret -d username=admin -d sharedsecret=SHAREDSECRET
+curl -sSk http://localhost:8000/login -H 'Accept: application/x-yaml' -d eauth=sharedsecret -d username=admin -d sharedsecret=SHAREDSECRET
 ```
 
 ## Deploy Ceph with DeapSea
@@ -123,17 +149,17 @@ deepsea_minions: 'ceph*'
   * Run stage 0 (check and update)
 
 ```
-  salt-run state.orch ceph.stage.0
-  o
-  deepsea stage run ceph.stage.0
+salt-run state.orch ceph.stage.0
 ```
 
   * If the deploy host gets rebooted to install a given kernel version, make sure ALL nodes are running that version. Remove any newer version if needed. Otherwise, to following stages will not complete
 
+  * Fix prometheus ARGS in /srv/salt/ceph/monitoring/prometheus/exporters/node_exporter.sls (change "-" to "--")
+
   * Run stage 1 (discover)
 
 ```
-  salt-run state.orch ceph.stage.1
+salt-run state.orch ceph.stage.1
 ```
 
   * Setup policy  /srv/pillar/ceph/proposals/policy.cfg
@@ -157,16 +183,16 @@ role-mgr/cluster/ceph-mon*.sls
 role-mds/cluster/ceph-mon*.sls
 
 # ISCSI GW
-role-igw/cluster/mon*.sls
+role-igw/cluster/ceph-mon*.sls
 
 # Rados GW
 role-rgw/cluster/ceph-mon*.sls
 
 # NFS
-role-ganesha/cluster/ganesha*.sls
+role-ganesha/cluster/ceph-mon*.sls
 
 # openATTIC
-role-openattic/cluster/openattic*.sls
+role-openattic/cluster/ceph-mon*.sls
 
 # COMMON
 config/stack/default/global.yml
@@ -180,43 +206,43 @@ profile-default/stack/default/ceph/minions/*.yml
   * You can also change network configuration in the following file
 
 ```
-  /srv/pillar/ceph/proposals/config/stack/default/ceph/cluster.yml
+/srv/pillar/ceph/proposals/config/stack/default/ceph/cluster.yml
 ```
 
   * Run stage 2 (setup)
 
 ```
-  salt-run state.orch ceph.stage.2
+salt-run state.orch ceph.stage.2
 ```
 
   * Check pillar
 
 ```
-  salt '*' pillar.items
+salt '*' pillar.items
 ```
 
   * Run stage 3 (Deploy)
 
 ```
-  salt-run state.orch ceph.stage.3
+salt-run state.orch ceph.stage.3
 ```
 
   * Once the previous step completes, we should have a working ceph cluster. Check with
 
 ```
-  ceph status
+ceph status
 ```
 
-  * Run stage 4 (Install additional services)
+  * Run stage 4 (Install additional services) **NOTE:** You may get en error installing package python-prometheus-client. Don't worry, it's not critical
 
 ```
-  salt-run state.orch ceph.stage.4
+salt-run state.orch ceph.stage.4
 ```
 
   * Check status
 
 ```
-  ceph status
+ceph status
 ```
 
 ### Complete stop/start
