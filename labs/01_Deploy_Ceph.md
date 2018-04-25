@@ -4,13 +4,13 @@
 
   * All these steps should be done on the ceph-deploy hosts. Connect using SSH
 
-```
+```shell
 ssh root@192.168.122.11
 ```
 
   * Add the following entries to /etc/hosts (change the IP prefix if needed)
 
-```
+```shell
 cat >> /etc/hosts <<EOF
 192.168.122.11  ceph-deploy
 192.168.122.12  ceph-test
