@@ -5,13 +5,14 @@ lab_name: Ceph
 prefix: clab
 images:
  default:
-   name: openSUSE-Leap.x86_64-1.42.3-mit-Build3.4.qcow2
-   url: "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap.x86_64-1.42.3-mit-Build3.4.qcow2"
+   name: openSUSE-Leap.x86_64-1.42.3-mit-Build3.10.qcow2
+   url: "https://download.opensuse.org/repositories/home:/kuko:/images/images/openSUSE-Leap.x86_64-1.42.3-mit-Build3.10.qcow2"
+ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBslD3aryvHxSdxmO05oJf/tLQsj9EFdj78w1kfKKji3DtQV32rww3nTboHYeOZ93RmAqfhmgj0YAOGcejsiAvoatBqV29/QCsjwJrhDUPRhk7OXbEEWThcG69xQUnpkE3KzpbbgqstQgVogXMsHWuuanGvqGeH2FZcYlL43mi75fsWcUlrkCFmYPLv2LfyjLvAr8OFjkUnCNGkkmxSGm2rGWSJ7q0jf6ZpFYhOBsBotRKVWL4O8WHlhhvCJuRluTvszYmdOuxaMAuAhQlMRyw+RSjxSaQOtQirHeo7WEhyyMNabT8g4RCr8nkp71PH20NcPtw7kKBzo837qwzTEw9 kuko@portatil-kuko"
 vms:
  ceph-deploy:
    name: ceph-deploy
-   ram: 1024
-   cpus: 1
+   ram: 4096
+   cpus: 4
    net:
      net1: 
        mac: 52:54:00:74:00:01
