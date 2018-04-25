@@ -17,7 +17,7 @@ This lab consists of 9 VM based on openSUSE Leap 42.3 with static IP
 
   0. Prepare the lab (download needed images)
 
-```sh
+```shell
 sudo rake prepare_lab
 ```
 
@@ -25,13 +25,13 @@ sudo rake prepare_lab
 
   2. If using btrfs, create a "vm" subvolume so you can create snapshot at each Lab stage
 
-```
+```shell
 sudo btrfs subvolume create vm
 ```
 
   3. Initialize the virtual machines for the lab
 
-```
+```shell
 sudo rake init_vms
 ```
 
@@ -39,20 +39,20 @@ sudo rake init_vms
 
   1. Start/Stop all VM belonging to the lab
 
-```
+```shell
 sudo rake start_vms
 sudo rake stop_vms
 ```
 
   2. Create snapshot at an important milestone (i.e. after installation)
 
-```
+```shell
 sudo btrfs snap -r vm .snapshots/01_after_installation
 ```
 
   3. Revert to the previous snapshot
 
-```
+```shell
 sudo btrfs subvol delete vm
 sudo btrfs snap .snapshots/01_after_installation vm
 ```
