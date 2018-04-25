@@ -1,31 +1,38 @@
-# CloudLab: Deploy a Ceph using SaltStack and DeapSea
+# CloudLab: Deploy a Ceph Cluster using SaltStack and DeepSea
 
-In this CloudLab we deploy a Ceph cluster using openSUSE and DeapSea, a SaltStack formula to deploy Ceph clusters
+In this CloudLab we deploy a Ceph cluster using openSUSE and DeepSea, a SaltStack formula to deploy Ceph clusters
+
+At the end of Lab 1 we will have a fully functional Ceph cluster, managed by OpenAttic and with all services: Ganesha-NFS, iSCSI gateway, RadosGW, etc
 
 ## The Lab
 
 This lab consists of 9 VM based on openSUSE Leap 42.3 with static IP
 
+- ceph-deploy (192.168.122.11): The host that will be used as deploy and monitoring host
+- ceph-test (192.168.122.12): Just a test host to use as a client for iSCSI, NFS, etc
+- ceph-mon{1,2,3} (192.168.122.2{1,2,3}): Ceph MON
+- ceph-osd{1,2,3,4} (192.168.122.3{1,2,3,4}): Ceph OSD storage hosts
+
 ## Common workflow
 
   0. Prepare the lab (download needed images)
 
-```
-rake prepare_lab
+```sh
+sudo rake prepare_lab
 ```
 
-  1. Edit the lab.yml file to adapt to your needs (if needed)
+  1. Edit the lab.yml file to adapt to your needs (al least add you SSH public key to be able to connect to the lab's VM)
 
-  2. If using btrfs, create a "vm" subvolume so you can create snapwhot at each Lab stage
+  2. If using btrfs, create a "vm" subvolume so you can create snapshot at each Lab stage
 
 ```
-btrfs subvolume create vm
+sudo btrfs subvolume create vm
 ```
 
   3. Initialize the virtual machines for the lab
 
 ```
-rake init_vms
+sudo rake init_vms
 ```
 
 ## Common tasks
@@ -33,21 +40,21 @@ rake init_vms
   1. Start/Stop all VM belonging to the lab
 
 ```
-rake start_vms
-rake stop_vms
+sudo rake start_vms
+sudo rake stop_vms
 ```
 
   2. Create snapshot at an important milestone (i.e. after installation)
 
 ```
-btfs snap -r vm .snapshots/01_after_installation
+sudo btrfs snap -r vm .snapshots/01_after_installation
 ```
 
   3. Revert to the previous snapshot
 
 ```
-btrfs subvol delete vm
-btfs snap .snapshots/01_after_installation vm
+sudo btrfs subvol delete vm
+sudo btrfs snap .snapshots/01_after_installation vm
 ```
 
 ## Labs

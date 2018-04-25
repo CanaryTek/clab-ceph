@@ -2,9 +2,16 @@
 
 ## Cluster preparation
 
+  * All these steps should be done on the ceph-deploy hosts. Connect using SSH
+
+```
+ssh root@192.168.122.11
+```
+
   * Add the following entries to /etc/hosts (change the IP prefix if needed)
 
 ```
+cat >> /etc/hosts <<EOF
 192.168.122.11  ceph-deploy
 192.168.122.12  ceph-test
 192.168.122.21  ceph-mon1
@@ -14,12 +21,13 @@
 192.168.122.32  ceph-osd2
 192.168.122.33  ceph-osd3
 192.168.122.34  ceph-osd4
+EOF
 ```
 
   * Copy /etc/hosts to all nodes
 
 ```
-for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/hosts root@$h:/etc/hosts; done
+for h in ceph-test ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/hosts root@$h:/etc/hosts; done
 ```
 
   * Disable ipv6 in all nodes (to avoid long delays)
@@ -30,17 +38,14 @@ net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
-```
-
-```
-for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/sysctl.d/disable-ipv6.conf root@$h:/etc/sysctl.d/disable-ipv6.conf; done
+for h in ceph-test ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; scp /etc/sysctl.d/disable-ipv6.conf root@$h:/etc/sysctl.d/disable-ipv6.conf; done
 ```
 
   * Setup nameserver in all hosts
 
 ```
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
-for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "nameserver 192.168.122.1" > /etc/resolv.conf'; done
+for h in ceph-test ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'echo "nameserver 192.168.122.1" > /etc/resolv.conf'; done
 ```
 
   * Install and start NTP in all hosts
@@ -65,44 +70,17 @@ zypper --non-interactive update; reboot
 
 ## Install DeepSea in deploy host
 
-  * Install DeepSea repo on all hosts
+  * Install my all-in-one openSUSE Storage repo
 
 ```
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "http://download.opensuse.org/repositories/filesystems:/ceph:/luminous/openSUSE_Leap_42.3/filesystems:ceph:luminous.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "https://download.opensuse.org/repositories/home:/kuko:/openSUSE-Storage/openSUSE_Leap_42.3/home:kuko:openSUSE-Storage.repo"'; done
 for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
 ```
 
-  * Install DeepSea
+  * Install DeepSea (only on deploy host)
 
 ```
-zypper install deepsea
-```
-
-  * Add OpenATTIC repo to all hosts
-
-```
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "http://download.opensuse.org/repositories/filesystems:openATTIC:3.x/openSUSE_Leap_42.3/filesystems:openATTIC:3.x.repo"'; done
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
-```
-
-  * Add Swiftgist repo to all hosts
-
-```
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "https://download.opensuse.org/repositories/home:/swiftgist/openSUSE_Leap_42.3/home:swiftgist.repo"'; done
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
-```
-
-  * Add Python repo to all hosts
-
-```
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h '"https://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_Leap_42.3/devel:languages:python.repo"'; done
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
-```
-
-  * Change /etc/salt/master to run salt-master as user "salt"
-
-```
-user: salt
+zypper in deepsea
 ```
 
   * Start salt-master
@@ -138,12 +116,23 @@ salt "*" test.version
 curl -sSk http://localhost:8000/login -H 'Accept: application/x-yaml' -d eauth=sharedsecret -d username=admin -d sharedsecret=SHAREDSECRET
 ```
 
-## Deploy Ceph with DeapSea
+## Deploy Ceph with DeepSea
 
-  * Setup ceph targets in /srv/pillar/ceph/deepsea_minions.sls
+
+  * Add deepsea grain to all ceph hosts
 
 ```
-deepsea_minions: 'ceph*'
+salt "ceph*" grains.append deepsea default
+```
+
+  * By default, DeepSea will update to latest kernels and automatically reboot nodes no stage 0. Since we prefer to reboot manually, we disable automatic reboots
+
+```
+cat > /srv/pillar/ceph/stack/global.yml <<EOF
+stage_prep_master: default-update-no-reboot
+stage_prep_minion: default-update-no-reboot
+EOF
+salt '*' saltutil.pillar_refresh
 ```
 
   * Run stage 0 (check and update)
@@ -152,13 +141,11 @@ deepsea_minions: 'ceph*'
 salt-run state.orch ceph.stage.0
 ```
 
-  * If the deploy host gets rebooted to install a given kernel version, make sure ALL nodes are running that version. Remove any newer version if needed. Otherwise, to following stages will not complete
-
-  * Fix prometheus ARGS in /srv/salt/ceph/monitoring/prometheus/exporters/node_exporter.sls (change "-" to "--")
+  * You may get some errors regarding kernel version checking. Don't worry, it's not critical (I will fix it ASAP)
 
   * Run stage 1 (discover)
 
-```
+ ```
 salt-run state.orch ceph.stage.1
 ```
 
@@ -192,7 +179,7 @@ role-rgw/cluster/ceph-mon*.sls
 role-ganesha/cluster/ceph-mon*.sls
 
 # openATTIC
-role-openattic/cluster/ceph-mon*.sls
+role-openattic/cluster/ceph-deploy.sls
 
 # COMMON
 config/stack/default/global.yml
@@ -230,10 +217,10 @@ salt-run state.orch ceph.stage.3
   * Once the previous step completes, we should have a working ceph cluster. Check with
 
 ```
-ceph status
+ceph -s
 ```
 
-  * Run stage 4 (Install additional services) **NOTE:** You may get en error installing package python-prometheus-client. Don't worry, it's not critical
+  * Run stage 4 (Install additional services) 
 
 ```
 salt-run state.orch ceph.stage.4
@@ -242,7 +229,7 @@ salt-run state.orch ceph.stage.4
   * Check status
 
 ```
-ceph status
+ceph -s
 ```
 
 ### Complete stop/start
