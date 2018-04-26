@@ -8,10 +8,14 @@ At the end of Lab 1 we will have a fully functional Ceph cluster, managed by Ope
 
 This lab consists of 9 VM based on openSUSE Leap 42.3 with static IP
 
-- ceph-deploy (192.168.122.11): The host that will be used as deploy and monitoring host
-- ceph-test (192.168.122.12): Just a test host to use as a client for iSCSI, NFS, etc
-- ceph-mon{1,2,3} (192.168.122.2{1,2,3}): Ceph MON
-- ceph-osd{1,2,3,4} (192.168.122.3{1,2,3,4}): Ceph OSD storage hosts
+| Name | IP | RAM | Cores | Disc | Services | Description |
+|------|----|-----|-------|------|----------|-------------| 
+| ceph-deploy | 192.168.122.11 | 4GB | 4 | 1x40G | OpenATTIC, Grafana, salt-master | The host that will be used as deploy and monitoring host |
+| ceph-test | 192.168.122.12 | 1GB | 1 | 1x40G | None | Just a test host to use as a client for iSCSI, NFS, etc |
+| ceph-mon{1,2,3} | 192.168.122.2{1,2,3}) | 1GB | 1 | 1x40G | MON, MGR, MDS, iSCSI Gateway, NFS-Ganesha, RadosGW | Monitors and Service gateways |
+| ceph-osd{1,2,3,4} | 192.168.122.3{1,2,3,4}) | 1GB | 1 | 1x40GB+2x30GB | OSD |  Ceph OSD storage hosts |
+
+**NOTE:** As you can see, you will need a pretty powerfull computer to run all VM needed by this lab
 
 ## Common workflow
 
