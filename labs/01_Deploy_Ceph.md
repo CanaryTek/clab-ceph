@@ -1,4 +1,4 @@
-# Desploy Ceph cluster
+# Deploy Ceph cluster
 
 ## Cluster preparation
 
@@ -68,10 +68,10 @@ for h in ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-int
 zypper --non-interactive update; reboot
 ```
 
-  * Install my openSUSE-Storage repo
+  * Install CTK-Storage repo
 
 ```shell
-for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "https://download.opensuse.org/repositories/home:/kuko:/openSUSE-Storage/openSUSE_Leap_42.3/home:kuko:openSUSE-Storage.repo"'; done
+for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper ar "https://download.opensuse.org/repositories/home:/kuko:/CTK-Storage/openSUSE_Leap_42.3/home:kuko:CTK-Storage.repo"'; done
 for h in ceph-deploy ceph-mon{1,2,3} ceph-osd{1,2,3,4}; do echo $h; ssh $h 'zypper --non-interactive --gpg-auto-import-keys ref'; done
 ```
 
