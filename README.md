@@ -4,6 +4,8 @@ In this CloudLab we deploy a Ceph cluster using openSUSE and DeepSea, a SaltStac
 
 At the end of Lab 1 we will have a fully functional Ceph cluster, managed by OpenAttic and with all services: Ganesha-NFS, iSCSI gateway, RadosGW, etc
 
+If you are looking for something based on CentOS, check [this project](https://github.com/CanaryTek/clab-ceph-ansible)
+
 ## The Lab
 
 This lab consists of 9 VM based on openSUSE Leap 42.3 with static IP
@@ -71,6 +73,7 @@ sudo btrfs snap .snapshots/01_after_installation vm
   * [Lab 6: CephFS](labs/06_CephFS.md)
   * [Lab 7: Users and Access](labs/07_Users_and_Access.md)
   * [Lab 8: RadosGW](labs/08_RadosGW.md)
+  * [Lab 9: Setup_iSCSI_Gateway](labs/09_Setup_iSCSI_GW.md)
 
 **TODO**
 
@@ -80,5 +83,4 @@ sudo btrfs snap .snapshots/01_after_installation vm
   * [Lab X: Delete a OSD host]
   * [Lab X: Replace a MON]
   * [Lab X: GaneshaNFS]
-  * [Lab X: iSCSI]
 

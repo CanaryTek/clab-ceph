@@ -125,7 +125,7 @@ curl -sSk http://localhost:8000/login -H 'Accept: application/x-yaml' -d eauth=s
 salt "ceph*" grains.append deepsea default
 ```
 
-  * By default, DeepSea will update to latest kernels and automatically reboot nodes no stage 0. Since we prefer to reboot manually, we disable automatic reboots
+  * By default, DeepSea will update to latest kernels and automatically reboot nodes in stage 0. Since we prefer to reboot manually, we disable automatic reboots
 
 ```shell
 cat > /srv/pillar/ceph/stack/global.yml <<EOF
