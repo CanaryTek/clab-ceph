@@ -74,6 +74,7 @@ sudo btrfs snap .snapshots/01_after_installation vm
   * [Lab 7: Users and Access](labs/07_Users_and_Access.md)
   * [Lab 8: RadosGW](labs/08_RadosGW.md)
   * [Lab 9: Setup_iSCSI_Gateway](labs/09_Setup_iSCSI_GW.md)
+  * [Lab 10: Ganesha_NFS](labs/10_Ganesha_NFS.md)
 
 **TODO**
 
@@ -82,5 +83,3 @@ sudo btrfs snap .snapshots/01_after_installation vm
   * [Lab X: Add new OSD host]
   * [Lab X: Delete a OSD host]
   * [Lab X: Replace a MON]
-  * [Lab X: GaneshaNFS]
-
