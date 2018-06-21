@@ -122,7 +122,6 @@ mount -t nfs 192.168.122.20:/cephfs /mnt/
   * Run this test command
 
 ```shell
-echo 1 > /mnt/test/_uno.txt
 while true; do sleep 1; date | tee -a /mnt/test/_test.txt ; done
 ```
 
